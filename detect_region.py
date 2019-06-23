@@ -11,8 +11,11 @@ def resize_img(img, width=500.0):
 GRAYSCALE = 0
 img = cv2.imread('test-plate.jpg', GRAYSCALE)
 
-w, h = resize_img(img, 500.0)
+w, h = resize_img(img, 1000.0)
 img_resized = cv2.resize(img, dsize=(w, h), interpolation=cv2.INTER_LANCZOS4)
 
 cv2.imwrite('processed2.jpg', img_resized)
-print (img_resized.shape)
+
+img_bilateral = cv2.bilateralFilter(img_resized, 15, 30, 30)
+cv2.imwrite('bilateral.jpg', img_bilateral)
+
