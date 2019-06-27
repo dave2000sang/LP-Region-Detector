@@ -23,19 +23,29 @@ cv2.imwrite('bilateral.jpg', img_bilateral)
 img_edges = cv2.Canny(img_bilateral, 100, 200)
 cv2.imwrite('edges.jpg', img_edges)
 
-contours, hierarchy = cv2.findContours(img_edges, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+contours, hierarchy = cv2.findContours(img_edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
 # iterate through contours
 
+possible_plates = []
+rectangles = []
+
 for contour in contours:
 	perimeter = cv2.arcLength(contour, True)
-	approx = cv2.approxPolyDP(contour, perimeter * 0.02, True)
-	if len(approx) == 4:
+	approx = cv2.approxPolyDP(contour, perimeter * 0.01, True)
+	if len(approx) >= 4 and perimeter > 100:
 		plate_region = approx
+		possible_plates.append(plate_region)
+		min_rect = cv2.minAreaRect(approx)
+		box = cv2.boxPoints(min_rect)
+		box = np.int0(box)
+		rectangles.append(box)
+		
 
-		print(plate_region)
-		img_copy = img_resized.copy()
-		img_copy = cv2.cvtColor(img_copy, cv2.COLOR_GRAY2RGB)
-		cv2.drawContours(img_copy, [plate_region], -1, (255,0,0), 3)
-		cv2.imshow('img with contours', img_copy)
-		cv2.waitKey(0)
+print(len(possible_plates))
+img_copy = img_resized.copy()
+img_copy = cv2.cvtColor(img_copy, cv2.COLOR_GRAY2RGB)
+cv2.drawContours(img_copy, possible_plates, -1, (255,0,0), 2)
+cv2.drawContours(img_copy, rectangles, -1, (0,255,0), 2)
+cv2.imshow('img with contours', img_copy)
+cv2.waitKey(0)
