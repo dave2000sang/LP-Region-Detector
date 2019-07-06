@@ -11,7 +11,7 @@ def resize_img(img, width=500.0):
 
 IMG_WIDTH = 1300.0
 GRAYSCALE = 0
-img = cv2.imread('test-plate.jpg', GRAYSCALE)
+img = cv2.imread('test3.jpg', GRAYSCALE)
 
 w, h = resize_img(img, IMG_WIDTH)
 img_resized = cv2.resize(img, dsize=(w, h), interpolation=cv2.INTER_LANCZOS4)
@@ -43,7 +43,7 @@ for contour in contours:
 		width_to_height_ratio = min_rect[1][0]/min_rect[1][1]
 		area = min_rect[1][0] * min_rect[1][1]
 
-		if abs(angle) < 1 and width_to_height_ratio > 1.8 and area > (IMG_WIDTH/10)**2:
+		if abs(angle) < 2 and width_to_height_ratio > 1.8 and width_to_height_ratio < 4 and area > (IMG_WIDTH/10)**2:
 			print(min_rect)
 			box = np.int0(cv2.boxPoints(min_rect))
 			possible_plates.append(plate_region)
@@ -56,6 +56,4 @@ cv2.drawContours(img_copy, possible_plates, -1, (0,0,255), 2)
 cv2.drawContours(img_copy, rectangles, -1, (0,255,0), 3)
 cv2.imshow('img with contours', img_copy)
 cv2.waitKey(0)
-
-
-cv2.imwrite('detected_plates.jpg', img_copy)
+cv2.imwrite('detected_plate3.jpg', img_copy)
